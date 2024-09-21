@@ -1,0 +1,37 @@
+
+
+volumes:
+  mongodb: {}
+  couchdb: {}
+
+
+services:
+
+# MariaDB Server
+# One of the most popular open source relational databases
+# https://mariadb.org/
+# DockerFile from 11.6-ubi
+# https://github.com/MariaDB/mariadb-docker
+
+      
+  mongodb:
+    container_name: r5a10-mongodb
+    image: mongo:${MONGODB_VERSION:-7.0.7-jammy}
+    volumes:
+      - ./data/configdb:/data/configdb
+      - mongodb:/data/db
+    ports:
+      - ${MONGODB_PORT:-27017}:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+  couchdb:
+    container_name: r5a10-couchdb
+    image: couchdb:${COUCH_DB_VERSION:-3.3}
+    environment:
+      COUCHDB_PASSWORD: ${DB_ROOT_PASSWORD}
+      COUCHDB_USER: ${COUCHDB_USER:-admin}
+    volumes:
+      - couchdb:/opt/couchdb/data
+    ports:
+      - 3007:5984
